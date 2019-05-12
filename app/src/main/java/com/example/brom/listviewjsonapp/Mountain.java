@@ -1,42 +1,49 @@
 package com.example.brom.listviewjsonapp;
 
-import java.io.Serializable;
-
-public class Mountain implements Serializable {
+public class Mountain {
     private String name;
     private String location;
     private int height;
 
+    public Mountain(String mName, String mLocation, int mHeight ){
+        name=mName;
+        location=mLocation;
+        height=mHeight;
+    }
 
-    public Mountain() {
-        name = "Saknar namn";
-        location = "Saknar plats";
-        height = -1;
+    public Mountain(String mName){
+        name=mName;
+        location="";
+        height=-1;
     }
-    public Mountain(String n,String l,int h)
-    {
-        name=n;
-        location=l;
-        height=h;
-    }
-    public String info()
-    {
-        String tmp=new String();
-        tmp+=name+" is located in mountain range"+location+" and reaches "+height+"m above sea level.";
-        return tmp;
-    }
-    public void setName(String n)
-    {
-        name=n;
 
+    public void setLocation(String l) {
+        this.location = l;
     }
-    public String getName()
-    {
-        return name;
+
+    public String getLocation() {
+        String l = "Position: "+location;
+        return l;
     }
+
+    public void setHeight(int h) {
+        this.height = h;
+    }
+
+    public String getHeight() {
+        String hojd = "Höjd: "+String.valueOf(height)+" meter över havet";
+        return hojd;
+    }
+
+    public String info(){
+        String info = new String();
+        info+= ""+name+" is part of the "+location+" mountain range and is "+height+"m high";
+        return info;
+    }
+
     @Override
-    public String toString(){
+    public String toString() {
         return name;
     }
-}
 
+}

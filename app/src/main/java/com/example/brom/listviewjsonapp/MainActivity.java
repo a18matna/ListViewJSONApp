@@ -62,6 +62,13 @@ public class MainActivity extends AppCompatActivity {
         ListView my_ListView = (ListView)findViewById(R.id.my_listview);
         my_ListView.setAdapter(adapter);
 
+        my_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(),adapter.getItem(position).info() ,Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -154,8 +161,12 @@ public class MainActivity extends AppCompatActivity {
 
                 for(int i = 0; i < Jarray.length(); i++){
                     JSONObject a = Jarray.getJSONObject(i);
+
                     Mountain m = new Mountain(a.getString("name"));
                     adapter.add(m);
+                    m.setHeight(a.getInt("size"));
+                    m.setLocation(a.getString("location"));
+                    mountains.add(m);
                 }
 
 
