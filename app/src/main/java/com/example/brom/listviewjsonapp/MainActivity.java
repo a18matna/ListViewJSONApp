@@ -1,10 +1,29 @@
 package com.example.brom.listviewjsonapp;
 
 import android.os.AsyncTask;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,10 +45,36 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
+    public ArrayList<Mountain>mountains = new ArrayList<Mountain>();
+    public ArrayAdapter<Mountain> adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+     new FetchData().execute();
+
+        //skapa en ArrayAdapter som kopplar samman
+        // list_item_textview, my_item_textview, och listan med rådata
+        //ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(),R.layout.list_item_textview,R.id.my_item_textview,listData);
+        adapter= new ArrayAdapter<Mountain>(this,R.layout.list_item_textview,R.id.my_item_textview);
+        //Koppla samman ListView med ArrayAdapter
+        ListView my_ListView = (ListView)findViewById(R.id.my_listview);
+        my_ListView.setAdapter(adapter);
+
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        return super.onOptionsItemSelected(item);
+
     }
 
     private class FetchData extends AsyncTask<Void,Void,String>{
@@ -45,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 // Construct the URL for the Internet service
-                URL url = new URL("_ENTER_THE_URL_TO_THE_PHP_SERVICE_SERVING_JSON_HERE_");
+                URL url = new URL("http://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?type=brom");
 
                 // Create the request to the PHP-service, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -96,11 +141,30 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String o) {
             super.onPostExecute(o);
+            Log.d("Walla","FETCH:"+o);
             // This code executes after we have received our data. The String object o holds
             // the un-parsed JSON string or is null if we had an IOException during the fetch.
 
             // Implement a parsing code that loops through the entire JSON and creates objects
             // of our newly created Mountain class.
+
+            try {
+                JSONArray Jarray = new JSONArray(o);
+
+
+                for(int i = 0; i < Jarray.length(); i++){
+                    JSONObject a = Jarray.getJSONObject(i);
+                    Mountain m = new Mountain(a.getString("name"));
+                    adapter.add(m);
+                }
+
+
+            } catch (JSONException e) {
+                Log.e("kungligt","E: "+e.getMessage());
+            }
+            for(int b = 0; b < mountains.size(); b++) {
+                Log.e("kungligt",mountains.get(b).toString());
+            }
         }
     }
 }
